@@ -11,10 +11,10 @@ xmr_icon='iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAABGdBTUEAALGPC/xhBQAAAC
 
 ## for each currency get price from api and use printf to strip all but two decimal places for the _price variable
 ## btc and xmr have two variables because (unformatted) btc price (i.e. $btc) is needed to calculate xmr_price
-btc=$(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=BTCUSD" | /usr/local/bin/python -c "import sys, json, dyld; print(json.load(sys.stdin)['price'])")
+btc=$(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=BTCUSD" | /usr/local/bin/python3 -c "import sys, json; print(json.load(sys.stdin)['price'])")
 btc_price=$(printf "%'.2f\n" $btc)
-eth_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=ETHUSD" | /usr/local/bin/python -c "import sys, json; print(json.load(sys.stdin)['price'])"))
-xmr=$(curl -s GET "https://api.binance.com/api/v3/avgPrice?symbol=XMRBTC" | /usr/local/bin/python -c "import sys, json; print(json.load(sys.stdin)['price'])")
+eth_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=ETHUSD" | /usr/local/bin/python3 -c "import sys, json; print(json.load(sys.stdin)['price'])"))
+xmr=$(curl -s GET "https://api.binance.com/api/v3/avgPrice?symbol=XMRBTC" | /usr/local/bin/python3 -c "import sys, json; print(json.load(sys.stdin)['price'])")
 xmr_price=$(printf "%'.2f\n" $(echo "$xmr*$btc" | bc))
 
 ## display the variables in bitbar/xbar
