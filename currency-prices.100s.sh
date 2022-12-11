@@ -4,7 +4,8 @@
 # <bitbar.version>v1.0</bitbar.version>
 # <bitbar.dependencies>bash, python</bitbar.dependencies>
 ## find local python
-ppyython=$(which python3 | head -n1 | sed -E 's#[a-z0-9 -]*(\/[a-z0-9\/-]*)#\1#')
+pthn=$(which python3 | head -n1 | sed -E 's#[a-z0-9 -]*(\/[a-z0-9\/-]*)#\1#')
+cmcapi=$(cat $(dirname $(/usr/local/bin/realpath $0))/.cmcapikey)
 
 ## set icons
 bitcoin_icon='iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAAACXBIWXMAABYlAAAWJQFJUiTwAAABY0lEQVRIx2P4z0AdyEBzg1DAdIYfQJgCZHmCWdsYMAFRBs0BC2UAWT5g1p6hbZAggwIcrgALVQNZSWDWAQY24g3qwRtJ/xgeMqxkCGJgotQgGLzAoEUdg/4zvGQQIxzYLAyODF/gQv0MlgwWDK4MOQxbgV5DKG0nLtZ2wIUykII2EMmoU8QZtAWrQQwMB+HiDygzaDNc/CQlBskwfIKLN5JrkAxDFsMTuOh9BiFSDXoHDI2HDB9RlJ1kECc2r20hkI5OMXhQxyAQzCTNoDJgaAgAvaLLEMkwn+EbkuLvDBLkR78yUoD/Z0gn3yAGhnwk5V2UGBRGLYNmICkvIGzQLqwG8TA0oJQAVvgMymcoYehg+AUXWgoM0kygWC/DbpQ4+89wjYERt0FiRNeNX4GlFJ505EykMacZDPGn7HwCBnxiOMcwjcGJcOEvzqADh2vBQk1AVhaYdZCBc7TKpqJBA9ZiAwDMH49EXcmY2QAAAABJRU5ErkJggg=='
@@ -14,12 +15,11 @@ fil_icon='iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAIRlWE
 
 ## for each currency get price from api and use printf to strip all but two decimal places for the _price variable
 ## btc and xmr have two variables because (unformatted) btc price (i.e. $btc) is needed to calculate xmr_price
-btc=$(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=BTCUSD" | $ppyython -c "import sys, json; print(json.load(sys.stdin)['price'])")
+btc=$(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=BTCUSD" | $pthn -c "import sys, json; print(json.load(sys.stdin)['price'])")
 btc_price=$(printf "%'.2f\n" $btc)
-eth_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=ETHUSD" | $ppyython -c "import sys, json; print(json.load(sys.stdin)['price'])"))
-xmr=$(curl -s GET "https://api.binance.com/api/v3/avgPrice?symbol=XMRBTC" | $ppyython -c "import sys, json; print(json.load(sys.stdin)['price'])")
-xmr_price=$(printf "%'.2f\n" $(echo "$xmr*$btc" | bc))
-fil_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=FILUSD" | $ppyython -c "import sys, json; print(json.load(sys.stdin)['price'])"))
+eth_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=ETHUSD" | $pthn -c "import sys, json; print(json.load(sys.stdin)['price'])"))
+xmr_price=$(printf "%'.2f\n" $(curl -s "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=328" -H "X-CMC_PRO_API_KEY: $cmcapi" | $pthn -c "import sys, json; print(json.load(sys.stdin)['data']['328']['quote']['USD']['price'])"))
+fil_price=$(printf "%'.2f\n" $(curl -s "https://api.binance.us/api/v3/ticker/price?symbol=FILUSD" | $pthn -c "import sys, json; print(json.load(sys.stdin)['price'])"))
 
 ## display the variables in bitbar/xbar
 echo "$btc_price | templateImage=$bitcoin_icon"
