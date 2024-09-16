@@ -8,7 +8,7 @@
 
 # <bitbar.author.github>shotcollin</bitbar.author.github>
 # <bitbar.desc>Display current Bitcoin price in the menu bar, with additional cryptocurrency prices in drop-down.</bitbar.desc>
-# <bitbar.image>TODO</bitbar.image>
+# <bitbar.image>https://raw.githubusercontent.com/shotcollin/bitbar-plugins/main/.github/images/currency-prices.bitbar-image.png</bitbar.image>
 
 ## Parse API data for ticker price and use printf to strip limit value to two decimal places
 btc_price=$(printf "%'.2f\n" $(curl -s "https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=BTC-USDT" | /usr/bin/python3 -c "import sys, json; print(json.load(sys.stdin)['data']['price'])"))
